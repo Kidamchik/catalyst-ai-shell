@@ -1,1066 +1,181 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="dark">
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>CaTalysT AI · Ancient Roman Core</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    :root {
-      --transition-fast: 0.18s ease;
-      --radius-lg: 18px;
-      --radius-md: 14px;
-      --radius-sm: 10px;
-      --radius-xs: 8px;
-      --shadow-main: 0 18px 60px rgba(0, 0, 0, 0.75);
-      --border-subtle: rgba(135, 102, 63, 0.65);
-    }
-
-    :root[data-theme="dark"] {
-      --bg-body: #0b0603;
-      --bg-overlay: rgba(7, 4, 2, 0.94);
-      --bg-shell: rgba(22, 13, 7, 0.96);
-      --bg-card: radial-gradient(circle at 0 0, rgba(196, 150, 77, 0.16), transparent 70%),
-                  rgba(19, 11, 6, 0.98);
-      --bg-card-soft: rgba(19, 11, 6, 0.96);
-      --bg-input: radial-gradient(circle at 0 0, rgba(238, 195, 123, 0.08), transparent 75%),
-                  rgba(15, 9, 5, 0.96);
-      --bg-output: radial-gradient(circle at 100% 0, rgba(209, 163, 98, 0.18), transparent 75%),
-                    rgba(14, 8, 4, 0.98);
-      --bg-nav: rgba(19, 10, 4, 0.98);
-
-      --text-main: #f5ecdd;
-      --text-muted: #c7b59b;
-      --text-soft: #a48c70;
-      --text-accent: #f3c978;
-
-      --accent-gold: #f3c66b;
-      --accent-gold-soft: rgba(243, 198, 107, 0.24);
-      --accent-sand: #c79b6b;
-      --accent-copper: #b4743a;
-
-      --border-strong: rgba(210, 169, 109, 0.9);
-      --crack-line: rgba(255, 234, 189, 0.26);
-    }
-
-    :root[data-theme="light"] {
-      --bg-body: #f4ebdd;
-      --bg-overlay: rgba(255, 248, 235, 0.92);
-      --bg-shell: rgba(255, 248, 236, 0.98);
-      --bg-card: radial-gradient(circle at 0 0, rgba(238, 198, 129, 0.2), transparent 70%),
-                  rgba(253, 242, 224, 0.98);
-      --bg-card-soft: rgba(252, 240, 222, 0.96);
-      --bg-input: radial-gradient(circle at 0 0, rgba(240, 204, 148, 0.16), transparent 75%),
-                  rgba(253, 245, 232, 0.98);
-      --bg-output: radial-gradient(circle at 100% 0, rgba(216, 175, 112, 0.22), transparent 75%),
-                    rgba(252, 243, 229, 0.98);
-      --bg-nav: rgba(248, 235, 217, 0.98);
-
-      --text-main: #3b2a18;
-      --text-muted: #7a5a37;
-      --text-soft: #a67b4b;
-      --text-accent: #b56e22;
-
-      --accent-gold: #c8902f;
-      --accent-gold-soft: rgba(200, 144, 47, 0.16);
-      --accent-sand: #d0a46d;
-      --accent-copper: #b4743a;
-
-      --border-strong: rgba(176, 121, 46, 0.95);
-      --crack-line: rgba(141, 100, 52, 0.35);
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    body {
-      min-height: 100vh;
-      background-color: var(--bg-body);
-      background-image:
-        linear-gradient(to bottom, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.8)),
-        url('roman_desert_bg.jpg');
-      background-size: cover;
-      background-position: center top;
-      background-attachment: fixed;
-      color: var(--text-main);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-      padding-bottom: 70px;
-    }
-
-    body[data-view="C"] .page-grid {
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.6fr);
-    }
-
-    .grain-overlay {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.18;
-      background-image: url('grain.png'); /* можно удалить, если не нужен шум */
-      mix-blend-mode: soft-light;
-      z-index: 0;
-    }
-
-    .app-shell {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 1120px;
-      background: var(--bg-shell);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-strong);
-      box-shadow: var(--shadow-main);
-      padding: 16px 18px 16px;
-      overflow: hidden;
-    }
-
-    .gold-crack-frame {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      border-radius: inherit;
-      background:
-        linear-gradient(120deg, transparent 0, transparent 38%, rgba(255, 223, 163, 0.32) 39%, transparent 41%, transparent 100%),
-        linear-gradient(215deg, transparent 0, transparent 70%, rgba(255, 235, 190, 0.25) 71%, transparent 73%, transparent 100%);
-      opacity: 0.45;
-      mix-blend-mode: screen;
-    }
-
-    .app-inner {
-      position: relative;
-      z-index: 1;
-    }
-
-    header.app-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 14px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .brand-logo {
-      width: 64px;
-      height: 64px;
-      border-radius: 16px;
-      background: transparent;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      border: 1px solid rgba(255, 226, 183, 0.86);
-      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.9);
-    }
-
-    .brand-logo img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      display: block;
-      filter: brightness(1.2) contrast(1.05);
-    }
-
-    .brand-text {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .brand-title {
-      font-size: 20px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--text-accent);
-    }
-
-    .brand-subtitle {
-      font-size: 11px;
-      color: var(--text-soft);
-      text-transform: uppercase;
-      letter-spacing: 0.22em;
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .mode-dropdown {
-      position: relative;
-    }
-
-    .mode-btn {
-      padding: 6px 10px;
-      border-radius: var(--radius-xs);
-      border: 1px solid rgba(214, 176, 116, 0.9);
-      background: radial-gradient(circle at 0 0, rgba(255, 231, 190, 0.3), transparent 70%),
-                  rgba(31, 18, 7, 0.98);
-      color: var(--text-muted);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: background var(--transition-fast), box-shadow var(--transition-fast), transform 0.1s ease;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7);
-      max-width: 230px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .mode-caret {
-      font-size: 11px;
-      opacity: 0.8;
-    }
-
-    .mode-btn:hover {
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
-      transform: translateY(-1px);
-    }
-
-    .mode-menu {
-      position: absolute;
-      right: 0;
-      margin-top: 6px;
-      min-width: 230px;
-      background: var(--bg-card-soft);
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-subtle);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.9);
-      padding: 6px 4px;
-      display: none;
-      z-index: 15;
-    }
-
-    .mode-menu.open {
-      display: block;
-    }
-
-    .mode-menu button {
-      width: 100%;
-      padding: 6px 10px;
-      border-radius: var(--radius-xs);
-      border: none;
-      background: transparent;
-      color: var(--text-soft);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      text-align: left;
-      cursor: pointer;
-      transition: background var(--transition-fast), color var(--transition-fast);
-    }
-
-    .mode-menu button:hover {
-      background: var(--accent-gold-soft);
-      color: var(--text-main);
-    }
-
-    .view-modes {
-      display: inline-flex;
-      border-radius: var(--radius-xs);
-      border: 1px solid rgba(214, 176, 116, 0.9);
-      overflow: hidden;
-      background: rgba(24, 13, 6, 0.96);
-    }
-
-    .view-btn {
-      padding: 6px 10px;
-      border: none;
-      background: transparent;
-      color: var(--text-soft);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      cursor: pointer;
-      transition: background var(--transition-fast), color var(--transition-fast);
-    }
-
-    .view-btn.active {
-      background: var(--accent-gold-soft);
-      color: var(--text-main);
-    }
-
-    .theme-toggle {
-      padding: 7px 11px;
-      border-radius: var(--radius-xs);
-      border: 1px solid rgba(214, 176, 116, 0.9);
-      background: radial-gradient(circle at 0 0, rgba(255, 231, 190, 0.3), transparent 70%),
-                  rgba(31, 18, 7, 0.98);
-      color: var(--text-muted);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background var(--transition-fast), transform 0.1s ease, box-shadow var(--transition-fast);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7);
-    }
-
-    .theme-toggle-icon {
-      width: 16px;
-      height: 16px;
-      border-radius: 999px;
-      border: 1px solid rgba(120, 85, 41, 0.9);
-      background:
-        radial-gradient(circle at 28% 0, #fff8e0 0, #f4cf7b 36%, #d08c38 72%, #472717 100%);
-      box-shadow: 0 0 10px rgba(244, 192, 112, 0.95);
-    }
-
-    .theme-toggle:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
-    }
-
-    .theme-toggle:active {
-      transform: translateY(1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.85);
-    }
-
-    :root[data-theme="light"] .theme-toggle {
-      background: radial-gradient(circle at 0 0, rgba(255, 244, 214, 1), transparent 70%),
-                  rgba(251, 237, 214, 0.96);
-      color: #7a5a37;
-    }
-
-    .main-nav {
-      margin-top: 8px;
-      background: var(--bg-nav);
-      border-radius: 12px;
-      border: 1px solid var(--border-subtle);
-      padding: 4px 6px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .nav-btn {
-      position: relative;
-      padding: 7px 14px;
-      border-radius: 10px;
-      border: none;
-      background: transparent;
-      color: var(--text-soft);
-      font-size: 13px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: background var(--transition-fast), color var(--transition-fast), transform 0.1s ease;
-      white-space: nowrap;
-    }
-
-    .nav-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: rgba(205, 160, 103, 0.8);
-    }
-
-    .nav-btn.active {
-      background: var(--accent-gold-soft);
-      color: var(--text-main);
-    }
-
-    .nav-btn.active .nav-dot {
-      background: var(--accent-gold);
-    }
-
-    .nav-btn:active {
-      transform: translateY(1px);
-    }
-
-    .nav-hint {
-      margin-left: auto;
-      font-size: 11px;
-      color: var(--text-soft);
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-    }
-
-    .pages {
-      margin-top: 18px;
-    }
-
-    .page {
-      display: none;
-    }
-
-    .page.active {
-      display: block;
-    }
-
-    .page-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-      gap: 14px;
-    }
-
-    @media (max-width: 900px) {
-      .page-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-      .header-right {
-        justify-content: flex-start;
-      }
-      .nav-hint {
-        display: none;
-      }
-    }
-
-    .card {
-      border-radius: var(--radius-md);
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      padding: 12px 12px 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(135deg, transparent 0, transparent 40%, var(--crack-line) 41%, transparent 43%, transparent 100%),
-        linear-gradient(200deg, transparent 0, transparent 72%, var(--crack-line) 73%, transparent 75%, transparent 100%);
-      opacity: 0.5;
-      pointer-events: none;
-      mix-blend-mode: soft-light;
-    }
-
-    .card-inner {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .card-title {
-      font-size: 13px;
-      color: var(--text-accent);
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-    }
-
-    .card-label {
-      font-size: 11px;
-      color: var(--text-soft);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-    }
-
-    .pill {
-      padding: 4px 8px;
-      border-radius: 9px;
-      border: 1px solid rgba(214, 176, 116, 0.8);
-      background: var(--bg-card-soft);
-      font-size: 11px;
-      color: var(--text-muted);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .pill-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--accent-gold);
-    }
-
-    .page-title-main {
-      font-size: 18px;
-      color: var(--text-main);
-      margin-bottom: 6px;
-    }
-
-    .page-text {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    .tag-row {
-      margin-top: 6px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .tag {
-      padding: 4px 8px;
-      border-radius: 9px;
-      font-size: 11px;
-      border: 1px solid rgba(189, 143, 84, 0.85);
-      color: var(--text-soft);
-      background: rgba(27, 16, 7, 0.96);
-    }
-
-    :root[data-theme="light"] .tag {
-      background: rgba(248, 234, 211, 0.96);
-      color: #7a5a37;
-    }
-
-    textarea.prompt-input {
-      width: 100%;
-      min-height: 120px;
-      background: var(--bg-input);
-      border-radius: var(--radius-sm);
-      border: 1px solid rgba(195, 154, 99, 0.9);
-      padding: 10px;
-      font-size: 13px;
-      color: var(--text-main);
-      resize: vertical;
-      outline: none;
-    }
-
-    textarea.prompt-input::placeholder {
-      color: var(--text-soft);
-    }
-
-    .card-footer {
-      margin-top: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .meta-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 11px;
-      color: var(--text-soft);
-      flex-wrap: wrap;
-    }
-
-    .meta-pill {
-      padding: 4px 8px;
-      border-radius: 9px;
-      border: 1px solid rgba(199, 156, 96, 0.9);
-      background: var(--bg-card-soft);
-    }
-
-    .primary-btn {
-      padding: 8px 16px;
-      border-radius: 12px;
-      border: none;
-      background: linear-gradient(135deg, #b87934, #f3c66b);
-      color: #261306;
-      font-weight: 600;
-      font-size: 13px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.85);
-      transition: transform 0.1s ease, box-shadow 0.1s ease, filter var(--transition-fast);
-      white-space: nowrap;
-    }
-
-    .primary-btn:hover {
-      filter: brightness(1.05);
-      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.9);
-    }
-
-    .primary-btn:active {
-      transform: translateY(1px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.9);
-    }
-
-    .primary-btn-icon {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      border: 1px solid rgba(76, 45, 19, 0.9);
-      background:
-        radial-gradient(circle at 30% 0, #fff7dc 0, #f4cf7b 38%, #d08c38 78%, #4a2c19 100%);
-    }
-
-    .output-box {
-      min-height: 120px;
-      border-radius: var(--radius-sm);
-      border: 1px solid rgba(195, 154, 99, 0.98);
-      background: var(--bg-output);
-      padding: 10px;
-      font-size: 13px;
-      color: var(--text-main);
-      line-height: 1.4;
-      white-space: pre-wrap;
-    }
-
-    .hint-text {
-      font-size: 11px;
-      color: var(--text-soft);
-    }
-
-    .ticker {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 46px;
-      border-top: 1px solid rgba(199, 156, 96, 0.9);
-      background:
-        radial-gradient(circle at 0 0, rgba(211, 168, 108, 0.28), transparent 65%),
-        rgba(18, 10, 4, 0.98);
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      padding: 0 12px;
-      z-index: 10;
-      box-shadow: 0 -10px 26px rgba(249, 238, 215, 0.45);
-    }
-
-    :root[data-theme="light"] .ticker {
-      background:
-        radial-gradient(circle at 0 0, rgba(245, 215, 165, 0.96), transparent 65%),
-        rgba(252, 238, 216, 0.98);
-      box-shadow: 0 -10px 26px rgba(230, 210, 180, 0.8);
-    }
-
-    .ticker-label {
-      font-size: 11px;
-      color: var(--text-soft);
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      margin-right: 12px;
-      white-space: nowrap;
-      opacity: 0.6;
-    }
-
-    .ticker-track {
-      flex: 1;
-      overflow: hidden;
-    }
-
-    .ticker-text {
-      display: inline-block;
-      white-space: nowrap;
-      padding-left: 100%;
-      animation: ticker-move 45s linear infinite;
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    @keyframes ticker-move {
-      0% {
-        transform: translateX(0);
-      }
-      100% {
-        transform: translateX(-100%);
-      }
-    }
-  </style>
+  <title>Catalyst AI – Ancient Roman Core</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="icon-512.png" />
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body data-view="A">
-  <div class="grain-overlay"></div>
-
+<body data-theme="dark">
   <div class="app-shell">
-    <div class="gold-crack-frame"></div>
-    <div class="app-inner">
-      <header class="app-header">
-        <div class="brand">
-          <div class="brand-logo">
-            <!-- Положи crest.png в ту же папку, что и index.html -->
-            <img src="crest.png" alt="CaTalysT Crest" />
-          </div>
-          <div class="brand-text">
-            <div class="brand-title">CaTalysT AI</div>
-            <div class="brand-subtitle">ANCIENT ROMAN CORE</div>
-          </div>
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-logo">
+          <span class="brand-logo-inner">CaTalyst</span>
         </div>
-        <div class="header-right">
-          <div class="mode-dropdown">
-            <button class="mode-btn" id="modeSelectBtn">
-              <span class="mode-label" id="modeLabel">CATALYST MODULAR SYSTEM</span>
-              <span class="mode-caret">▾</span>
-            </button>
-            <div class="mode-menu" id="modeMenu">
-              <button data-mode="CATALYST MODULAR SYSTEM">Catalyst Modular System</button>
-              <button data-mode="PATTERN CORE & SOUL KEEPER">Pattern Core &amp; Soul Keeper</button>
-              <button data-mode="FREEDOM MODE">Freedom Mode</button>
-              <button data-mode="DEVELOPER MODE · GMC">Developer Mode (General Module Creator)</button>
-              <button data-mode="LOCAL AI">Local AI</button>
-              <button data-mode="GLOBAL AI">Global AI</button>
-            </div>
-          </div>
-          <div class="view-modes">
-            <button class="view-btn active" data-view="A">Mode A</button>
-            <button class="view-btn" data-view="C">Mode C</button>
-          </div>
-          <button class="theme-toggle" id="themeToggle">
-            <span class="theme-toggle-icon"></span>
-            <span id="themeLabel">ТЁМНАЯ ТЕМА</span>
+        <div class="brand-text">
+          <div class="brand-title">CATALYST AI</div>
+          <div class="brand-sub">Ancient Roman Core • Home Shell</div>
+        </div>
+      </div>
+
+      <div class="top-controls">
+        <div class="chip-group">
+          <button class="chip chip-outline" data-mode="A">Mode A</button>
+          <button class="chip" data-mode="B">Mode B</button>
+          <button class="chip" data-mode="C">Mode C</button>
+        </div>
+
+        <div class="theme-toggle">
+          <span>Тема</span>
+          <button id="themeToggle" class="toggle-btn">
+            <span class="toggle-label sun">Sun</span>
+            <span class="toggle-slider"></span>
+            <span class="toggle-label moon">Moon</span>
           </button>
         </div>
-      </header>
+      </div>
+    </header>
 
-      <nav class="main-nav">
-        <button class="nav-btn active" data-page="home">
-          <span class="nav-dot"></span>
-          NaniGatoR
-        </button>
-        <button class="nav-btn" data-page="local">
-          <span class="nav-dot"></span>
-          Local.AI
-        </button>
-        <button class="nav-btn" data-page="remote">
-          <span class="nav-dot"></span>
-          Global.AI
-        </button>
-        <div class="nav-hint">единый интерфейс · offline / online</div>
-      </nav>
+    <nav class="main-nav">
+      <button class="nav-btn active" data-screen="overview">NaniGatOR</button>
+      <button class="nav-btn" data-screen="local">LocalAI</button>
+      <button class="nav-btn" data-screen="global">GlobalAI</button>
+    </nav>
 
-      <main class="pages">
-        <!-- СТРАНИЦА 1: NaniGatoR -->
-        <section class="page active" id="page-home">
-          <div class="page-grid">
-            <div class="card">
-              <div class="card-inner">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">NaniGatoR · overview</div>
-                    <div class="card-label">главный экран</div>
-                  </div>
-                  <div class="pill">
-                    <span class="pill-dot"></span>
-                    центр управления CaTalysT AI
-                  </div>
-                </div>
-                <div>
-                  <h1 class="page-title-main">Твоя оболочка для работы с ИИ, а не просто ещё одна вкладка</h1>
-                  <p class="page-text">
-                    Этот экран — витрина системы. Здесь можно описать сам проект, коротко расписать концепцию,
-                    модули, роли и то, чем CaTalysT AI отличается от обычного «просто GPT в браузере».
-                  </p>
-                  <p class="page-text" style="margin-top: 8px;">
-                    Всё, что внутри: режимы, проекты, заметки, технастройки, — остаётся твоей системой. Внешний ИИ
-                    просто движок под капотом.
-                  </p>
-                </div>
-                <div class="tag-row">
-                  <span class="tag">Roman · Desert · Gold</span>
-                  <span class="tag">Single Core · Multi Modes</span>
-                  <span class="tag">Offline / Online Shell</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="card-inner">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Структура интерфейса</div>
-                    <div class="card-label">3 страницы · один стиль</div>
-                  </div>
-                </div>
-                <div class="page-text">
-                  <strong>1. NaniGatoR.</strong> Главная панель, описание системы, режимов, проектов и логики работы.
-                  Здесь можно оставить только чистую структуру без лишнего текста и добавлять её по мере развития.
-                </div>
-                <div class="page-text" style="margin-top: 6px;">
-                  <strong>2. Local.AI.</strong> Работа с локальным ИИ на ROG: ввод запроса, ответ, режимы отображения.
-                  Здесь будет связка с локальным сервером, когда ты его поднимешь.
-                </div>
-                <div class="page-text" style="margin-top: 6px;">
-                  <strong>3. Global.AI.</strong> Работа с внешним ИИ через твой backend. Фронт остаётся чистым, ключи и
-                  техчасть живут на сервере.
-                </div>
-                <div class="tag-row">
-                  <span class="tag">Адаптив под телефон и ПК</span>
-                  <span class="tag">Одна оболочка · разные режимы</span>
-                </div>
-              </div>
-            </div>
+    <main class="content">
+      <!-- SCREEN: OVERVIEW -->
+      <section id="screen-overview" class="screen active">
+        <div class="card card-main">
+          <div class="card-tag">Navigator • Overview</div>
+          <h1 class="card-title">
+            Твоя оболочка для работы с ИИ, а не просто ещё одна вкладка
+          </h1>
+          <p class="card-text">
+            Этот экран — витрина системы. Здесь ты описываешь сам проект, коротко расписываешь концепцию,
+            модули, роли и то, чем Catalyst AI отличается от обычного «просто GPT в браузере».
+          </p>
+          <p class="card-text">
+            Всё, что внутри: режимы, проекты, заметки, технастройки — остаётся твоей системой. Внешний ИИ
+            просто движок под капотом.
+          </p>
+          <div class="pill-row">
+            <span class="pill">Roman • Desert • Gold</span>
+            <span class="pill">Single Core • Multi Modes</span>
+            <span class="pill">Online / Offline Shell</span>
           </div>
-        </section>
+        </div>
 
-        <!-- СТРАНИЦА 2: Local.AI -->
-        <section class="page" id="page-local">
-          <div class="page-grid">
-            <div class="card">
-              <div class="card-inner">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Local.AI · ROG</div>
-                    <div class="card-label">ввод запроса</div>
-                  </div>
-                </div>
-                <textarea
-                  class="prompt-input"
-                  id="localPrompt"
-                  placeholder="Опиши запрос для локального ИИ: анализ, текст, код, логика работы..."
-                ></textarea>
-                <div class="card-footer">
-                  <div class="meta-row">
-                    <div class="meta-pill">Локальная модель (подключишь позже)</div>
-                    <span>Режим: максимум ресурса под одного пользователя</span>
-                  </div>
-                  <button class="primary-btn" id="sendLocal">
-                    <span class="primary-btn-icon"></span>
-                    <span>Отправить в Local.AI</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="card-inner">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Ответ Local.AI</div>
-                    <div class="card-label">зона выдачи ответа</div>
-                  </div>
-                </div>
-                <div class="output-box" id="localOutput">
-Ответ локального ИИ будет появляться здесь.
-Сейчас это демо-область, чтобы ты видел структуру интерфейса.
-                </div>
-                <div class="hint-text" style="margin-top: 6px;">
-                  Когда поднимешь локальный сервер, сюда просто подставится реальный текст ответа от модели.
-                </div>
-              </div>
-            </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-tag">Структура интерфейса</div>
+            <h2 class="card-subtitle">3 экрана • один стиль</h2>
+            <ul class="list">
+              <li>
+                <strong>NaniGatOR.</strong> Главная панель, описание системы, режимов, проектов и логики работы.
+                Чистая структура без лишнего текста.
+              </li>
+              <li>
+                <strong>LocalAI.</strong> Работа с локальным ИИ на ROG: ввод запросов, ответ, режим отображения. Всё
+                завязано на локальный сервер, когда его подключишь.
+              </li>
+              <li>
+                <strong>GlobalAI.</strong> Работа с внешними ИИ через твой backend. Фронт остаётся чистым, ключи и токены
+                живут не здесь.
+              </li>
+            </ul>
           </div>
-        </section>
 
-        <!-- СТРАНИЦА 3: Global.AI -->
-        <section class="page" id="page-remote">
-          <div class="page-grid">
-            <div class="card">
-              <div class="card-inner">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Global.AI</div>
-                    <div class="card-label">запрос к внешнему ИИ</div>
-                  </div>
-                </div>
-                <textarea
-                  class="prompt-input"
-                  id="remotePrompt"
-                  placeholder="Сформулируй задачу для внешнего ИИ: любой запрос, который будет обрабатываться через твой backend..."
-                ></textarea>
-                <div class="card-footer">
-                  <div class="meta-row">
-                    <div class="meta-pill">Ключи и логика — только на backend</div>
-                    <span>Фронтенд остаётся чистым</span>
-                  </div>
-                  <button class="primary-btn" id="sendRemote">
-                    <span class="primary-btn-icon"></span>
-                    <span>Отправить в Global.AI</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="card-inner">
-                <div class="card-header">
-                  <div>
-                    <div class="card-title">Ответ Global.AI</div>
-                    <div class="card-label">gate / api слой</div>
-                  </div>
-                </div>
-                <div class="output-box" id="remoteOutput">
-Здесь будет текст ответа от внешнего ИИ.
-Сейчас это просто оболочка под будущий backend.
-                </div>
-                <div class="hint-text" style="margin-top: 6px;">
-                  Когда сделаешь свой backend, он будет присылать сюда уже подготовленный ответ, без лишних деталей реализации.
-                </div>
-              </div>
-            </div>
+          <div class="card">
+            <div class="card-tag">Заметки по развитию</div>
+            <h2 class="card-subtitle">Что можно дорастить позже</h2>
+            <ul class="list">
+              <li>Быстрый выбор модели (Local / Cloud / Hybrid).</li>
+              <li>История запросов с тегами.</li>
+              <li>Экран под модули Catalyst: Matrix 8×8, Soul Cipher и т.д.</li>
+              <li>Режим презентации для показов клиентам.</li>
+            </ul>
           </div>
-        </section>
-      </main>
-    </div>
+        </div>
+      </section>
+
+      <!-- SCREEN: LOCAL AI -->
+      <section id="screen-local" class="screen">
+        <div class="card card-main">
+          <div class="card-tag">LocalAI • ROG Shell</div>
+          <h1 class="card-title">Локальный ИИ на твоём ROG</h1>
+          <p class="card-text">
+            Здесь будет работа с локальной моделью: без интернета, без внешних серверов. Интерфейс уже готов,
+            дальше останется подвязать backend.
+          </p>
+          <div class="pill-row">
+            <span class="pill">Offline Core</span>
+            <span class="pill">Твои данные • твой диск</span>
+            <span class="pill">ROG GPU / CPU</span>
+          </div>
+        </div>
+
+        <div class="card card-io">
+          <div class="card-tag">Консоль запросов</div>
+          <label class="field-label" for="localPrompt">Запрос к локальному ИИ</label>
+          <textarea id="localPrompt" class="textarea" placeholder="Опиши задачу для локального ядра..."></textarea>
+          <div class="io-actions">
+            <button class="btn primary" disabled>Отправить (backend позже)</button>
+            <button class="btn ghost">Очистить</button>
+          </div>
+          <div class="local-status">
+            Backend ещё не подключён. Это чисто оболочка.
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN: GLOBAL AI -->
+      <section id="screen-global" class="screen">
+        <div class="card card-main">
+          <div class="card-tag">GlobalAI • External Engines</div>
+          <h1 class="card-title">Подключение к внешним ИИ через backend</h1>
+          <p class="card-text">
+            Здесь будет работа с внешними моделями. Фронт остаётся чистым — никакие ключи и токены не
+            живут в браузере, всё уйдёт на твой сервер.
+          </p>
+          <div class="pill-row">
+            <span class="pill">API-safe фронт</span>
+            <span class="pill">Внешние движки</span>
+            <span class="pill">Готов под расширение</span>
+          </div>
+        </div>
+
+        <div class="card card-io">
+          <div class="card-tag">Глобальная консоль</div>
+          <label class="field-label" for="globalPrompt">Запрос к внешнему ИИ</label>
+          <textarea id="globalPrompt" class="textarea" placeholder="Запрос для внешнего ИИ через backend..."></textarea>
+          <div class="io-actions">
+            <button class="btn primary" disabled>Отправить (backend позже)</button>
+            <button class="btn ghost">Очистить</button>
+          </div>
+          <div class="local-status">
+            API ещё не подключено.
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="ticker">
+        <div class="ticker-inner">
+          Люди слишком часто слушают чужие голоса и сворачивают с собственной дороги. Ты живёшь одну жизнь — 
+          и если отдашь её на управление другим, то в старости впервые встретишься с самим собой и не узнаешь. 
+          Ты сядешь в тишине и спросишь: «А что, если бы я хоть раз выбрал свой путь?» Ответа не будет. 
+          Будет только понимание, что чужие советы сделали твой путь чужой жизнью.
+        </div>
+      </div>
+      <div class="footer-meta">
+        Discendo discimus • Обучая, мы учимся
+      </div>
+    </footer>
   </div>
 
-  <div class="ticker">
-    <div class="ticker-label"></div>
-    <div class="ticker-track">
-      <div class="ticker-text"></div>
-    </div>
-  </div>
-
-  <script>
-    // Переключение страниц
-    const navButtons = document.querySelectorAll('.nav-btn');
-    const pages = {
-      home: document.getElementById('page-home'),
-      local: document.getElementById('page-local'),
-      remote: document.getElementById('page-remote'),
-    };
-
-    navButtons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const target = btn.getAttribute('data-page');
-        navButtons.forEach((b) => b.classList.remove('active'));
-        btn.classList.add('active');
-        Object.entries(pages).forEach(([key, page]) => {
-          page.classList.toggle('active', key === target);
-        });
-      });
-    });
-
-    // Переключение темы
-    const htmlEl = document.documentElement;
-    const themeToggle = document.getElementById('themeToggle');
-    const themeLabel = document.getElementById('themeLabel');
-
-    function updateThemeLabel() {
-      const current = htmlEl.getAttribute('data-theme') || 'dark';
-      themeLabel.textContent = current === 'dark' ? 'ТЁМНАЯ ТЕМА' : 'СВЕТЛАЯ ТЕМА';
-    }
-
-    themeToggle.addEventListener('click', () => {
-      const current = htmlEl.getAttribute('data-theme') || 'dark';
-      const next = current === 'dark' ? 'light' : 'dark';
-      htmlEl.setAttribute('data-theme', next);
-      updateThemeLabel();
-    });
-
-    updateThemeLabel();
-
-    // DEMO-логика ответов (потом заменишь на реальные fetch)
-    const localBtn = document.getElementById('sendLocal');
-    const localPrompt = document.getElementById('localPrompt');
-    const localOutput = document.getElementById('localOutput');
-
-    const remoteBtn = document.getElementById('sendRemote');
-    const remotePrompt = document.getElementById('remotePrompt');
-    const remoteOutput = document.getElementById('remoteOutput');
-
-    function mockReply(type, input) {
-      if (!input.trim()) {
-        return 'Сначала напиши запрос.';
-      }
-
-      if (type === 'local') {
-        return 'Local.AI DEMO\\n\\nЗдесь будет ответ локальной модели, когда подключишь движок на ROG.';
-      }
-
-      return 'Global.AI DEMO\\n\\nЗдесь будет ответ внешнего ИИ через твой backend.';
-    }
-
-    localBtn.addEventListener('click', () => {
-      localOutput.textContent = mockReply('local', localPrompt.value);
-    });
-
-    remoteBtn.addEventListener('click', () => {
-      remoteOutput.textContent = mockReply('remote', remotePrompt.value);
-    });
-
-    // Dropdown режимов
-    const modeBtn = document.getElementById('modeSelectBtn');
-    const modeMenu = document.getElementById('modeMenu');
-    const modeLabel = document.getElementById('modeLabel');
-
-    modeBtn.addEventListener('click', () => {
-      modeMenu.classList.toggle('open');
-    });
-
-    modeMenu.querySelectorAll('button').forEach((item) => {
-      item.addEventListener('click', () => {
-        modeLabel.textContent = item.dataset.mode;
-        modeMenu.classList.remove('open');
-      });
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!modeBtn.contains(e.target) && !modeMenu.contains(e.target)) {
-        modeMenu.classList.remove('open');
-      }
-    });
-
-    // Mode A / Mode C
-    const viewButtons = document.querySelectorAll('.view-btn');
-    const bodyEl = document.body;
-
-    viewButtons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const view = btn.getAttribute('data-view');
-        bodyEl.setAttribute('data-view', view);
-        viewButtons.forEach((b) => b.classList.remove('active'));
-        btn.classList.add('active');
-      });
-    });
-
-    // Латинские римские изречения для бегущей строки
-    const latinProverbs = [
-      'Alea iacta est · Жребий брошен',
-      'Carpe diem · Лови момент',
-      'Fortes fortuna adiuvat · Смелым помогает судьба',
-      'Veni, vidi, vici · Пришёл, увидел, победил',
-      'Tempus fugit · Время бежит',
-      'Amor fati · Люби свою судьбу',
-      'Audentes fortuna iuvat · Удача благоволит дерзким',
-      'Per aspera ad astra · Через тернии к звёздам',
-      'Cogito, ergo sum · Мыслю, следовательно, существую',
-      'Memento mori · Помни о смерти',
-      'Sic transit gloria mundi · Так проходит мирская слава',
-      'Mens sana in corpore sano · В здоровом теле здоровый дух',
-      'Acta non verba · Дела, а не слова',
-      'Dum spiro, spero · Пока дышу, надеюсь',
-      'Homo faber fortunae suae · Человек кузнец своей судьбы',
-      'Ad astra per ardua · К звёздам через трудности',
-      'In vino veritas · Истина в вине',
-      'Non ducor, duco · Я не ведом, я веду',
-      'Nulla dies sine linea · Ни дня без линии (дела)',
-      'Repetitio est mater studiorum · Повторение — мать учения',
-      'Quem di diligunt, adolescens moritur · Кого любят боги, тот умирает молодым',
-      'Faber est suae quisque fortunae · Каждый сам творец своей судьбы',
-      'Omnia mutantur, nos et mutamur in illis · Всё меняется, и мы меняемся вместе с этим',
-      'Verba volant, scripta manent · Слова улетают, написанное остаётся',
-      'Vita brevis, ars longa · Жизнь коротка, искусство вечно',
-      'Ubi concordia, ibi victoria · Где согласие, там победа',
-      'Discendo discimus · Обучая, мы учимся',
-      'Divide et impera · Разделяй и властвуй',
-      'Gutta cavat lapidem · Капля точит камень',
-      'Labor omnia vincit · Труд всё побеждает'
-    ];
-
-    const tickerTextEl = document.querySelector('.ticker-text');
-    if (tickerTextEl) {
-      const proverb =
-        latinProverbs[Math.floor(Math.random() * latinProverbs.length)];
-      tickerTextEl.textContent = proverb;
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
