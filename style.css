@@ -12,7 +12,7 @@
 
 /* DARK THEME -------------------------------------------------- */
 
-:root[data-theme="dark"] {
+body[data-theme="dark"] {
   --bg-body: #0b0603;
   --bg-overlay: rgba(7, 4, 2, 0.94);
   --bg-shell: rgba(22, 13, 7, 0.96);
