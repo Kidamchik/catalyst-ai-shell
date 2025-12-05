@@ -15,16 +15,16 @@ navButtons.forEach((btn) => {
   });
 });
 
-// Переключатель темы (Sun / Moon)
+// ТЕМА: кладём data-theme на <html>, а не на body
+const root = document.documentElement;
 const themeToggle = document.getElementById("themeToggle");
-const body = document.body;
 
 function setTheme(theme) {
-  body.setAttribute("data-theme", theme);
+  root.setAttribute("data-theme", theme);
   localStorage.setItem("catalyst-theme", theme);
 }
 
-// загружаем сохранённую тему
+// загружаем сохранённую тему или по умолчанию dark
 const savedTheme = localStorage.getItem("catalyst-theme");
 if (savedTheme === "light" || savedTheme === "dark") {
   setTheme(savedTheme);
@@ -34,7 +34,7 @@ if (savedTheme === "light" || savedTheme === "dark") {
 
 if (themeToggle) {
   themeToggle.addEventListener("click", () => {
-    const current = body.getAttribute("data-theme") || "dark";
+    const current = root.getAttribute("data-theme") || "dark";
     setTheme(current === "dark" ? "light" : "dark");
   });
 }
